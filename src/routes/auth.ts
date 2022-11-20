@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { register } from "../mongodb/db/auth";
+import passport from "passport";
 
 const authRouter = Router();
 
@@ -14,4 +15,21 @@ authRouter.post("/users", async (req: Request, res: Response) => {
     res.status(500).send(err);
   }
 });
+
+authRouter.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile"] })
+);
+
+authRouter.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "http://localhost:3000",
+    session: true,
+  }),
+  function (req, res) {
+    res.redirect("http://localhost:3000");
+  }
+);
+
 export default authRouter;
