@@ -9,7 +9,8 @@ const GoogleStrategy = pgo20.Strategy;
 passport.use(
   new GoogleStrategy(
     {
-      clientID: "471484454288-4ge4ee2ebu7h4thf6r1ckbh9eq2av0cf.apps.googleusercontent.com",
+      clientID:
+        "471484454288-4ge4ee2ebu7h4thf6r1ckbh9eq2av0cf.apps.googleusercontent.com",
       clientSecret: "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",
       callbackURL: "/api/v1/auth/google/callback",
     },
@@ -29,8 +30,9 @@ passport.use(
 
             await newUser.save();
             cb(null, newUser);
+          } else {
+            cb(null, doc);
           }
-          cb(null, doc);
         }
       );
     }

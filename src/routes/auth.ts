@@ -28,8 +28,23 @@ authRouter.get(
     session: true,
   }),
   function (req, res) {
+    console.log("User stored: " + req.user);
+
     res.redirect("http://localhost:3000");
   }
 );
+
+authRouter.get("/getuser", (req: any, res: any) => {
+  console.log(req.user);
+  res.send(req.user);
+});
+
+authRouter.get("/auth/logout", (req, res) => {
+  if (req.user) {
+    req.logout(() => {
+      res.send("done");
+    });
+  }
+});
 
 export default authRouter;

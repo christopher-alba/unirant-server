@@ -6,41 +6,42 @@ import passport from "passport";
 import session from "express-session";
 import "./mongodb";
 import "./config/passport";
+import { NewUser } from "./types/user";
+import { User } from "./mongodb/models";
 
+const jsonParser = bodyParser.json();
+const urlencondedParser = bodyParser.urlencoded({ extended: false });
+server.use(jsonParser);
+server.use(urlencondedParser);
+server.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+server.set("trust proxy", 1);
 server.use(
   session({
     secret: "secretcode",
     resave: true,
     saveUninitialized: true,
-    cookie: {
-      sameSite: "none",
-      secure: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7, // One Week
-    },
   })
 );
-
 server.use(passport.initialize());
 server.use(passport.session());
 
-passport.serializeUser(function (user, done) {
-  done(null, user);
+passport.serializeUser((user: any, done: any) => {
+  console.log("serializing user: " + user);
+  return done(null, user._id);
 });
 
-passport.deserializeUser(function (user: any, done) {
-  done(null, user);
+passport.deserializeUser((id: string, done: any) => {
+  console.log("Testing 1");
+  User.findById(id, (err: Error, doc: any) => {
+    // Whatever we return goes to the client and binds to the req.user property
+    return done(null, doc);
+  });
 });
-
-const jsonParser = bodyParser.json();
-const urlencondedParser = bodyParser.urlencoded({ extended: false });
-
-server.use(jsonParser);
-server.use(urlencondedParser);
-server.use(
-  cors({
-    origin: "*",
-  })
-);
 
 const port: string | number = process.env.PORT || 5000;
 

@@ -10,4 +10,6 @@ export type NewUser = {
   email?: string;
   token?: string;
   googleId?: string;
+  __v?: number;
+  _id?: string;
 };
