@@ -11,8 +11,8 @@ authRouter.post("/users", async (req: Request, res: Response) => {
   try {
     const userId = await register(req.body);
     res.status(200).send(userId);
-  } catch (err) {
-    res.status(500).send(err);
+  } catch (err: any) {
+    res.status(500).send(err.message);
   }
 });
 
@@ -33,6 +33,24 @@ authRouter.get(
     res.redirect("http://localhost:3000");
   }
 );
+
+authRouter.post(
+  "/auth/default/login",
+  passport.authenticate("local"),
+  function (req, res) {
+    res.status(200).send("User logged in: " + req.user);
+  }
+);
+
+authRouter.post("/auth/default/register", async (req, res) => {
+  try {
+    const userId = await register(req.body);
+    res.status(200).send(userId);
+  } catch (err: any) {
+    console.log("ERROR THROWN: " + err);
+    res.status(500).send(err.message);
+  }
+});
 
 authRouter.get("/getuser", (req: any, res: any) => {
   console.log(req.user);
