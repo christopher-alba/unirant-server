@@ -58,3 +58,24 @@ export const verifyJWT = async (userId: string, localToken: string) => {
     return false;
   }
 };
+
+export const clearJWT = async (userId: string) => {
+  try {
+    const response = await UserModel.updateOne(
+      {
+        _id: userId,
+      },
+      {
+        token: "",
+      }
+    );
+    console.log(response);
+    if (response.acknowledged && response.modifiedCount === 1) {
+      return "Successfully cleared JWT from user.";
+    } else {
+      return new Error("Unable to clear user token.");
+    }
+  } catch (err: any) {
+    return err;
+  }
+};
