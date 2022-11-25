@@ -21,7 +21,7 @@ authRouter.post("/users", async (req: Request, res: Response) => {
 
 authRouter.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["profile"] })
+  passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
 authRouter.get(

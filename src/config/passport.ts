@@ -36,7 +36,7 @@ passport.use(
 
             const newProfile: NewProfile = {
               username: profile.name.givenName + ":" + profile.id,
-              email: "",
+              email: profile.emails[0].value,
               profilePicture: profile.photos[0].value,
               displayName: profile.name.givenName,
             };
