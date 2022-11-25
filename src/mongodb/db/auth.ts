@@ -1,7 +1,8 @@
 import { NewUser, UserArgs } from "../../types/user";
-import { User as UserModel } from "../models";
+import { Profile, User as UserModel } from "../models";
 import { encryptPassword } from "../../utils/auth";
 import jwt from "jsonwebtoken";
+import { NewProfile } from "../../types/profile";
 
 export const register = async (user: UserArgs) => {
   const userFromDB = await UserModel.findOne({ username: user.username });
@@ -14,9 +15,19 @@ export const register = async (user: UserArgs) => {
   const newUser: NewUser = {
     username: user.username,
     password: await encryptPassword(user.password),
-    email: user.email,
     token: "invalid token",
   };
+
+  const newProfile: NewProfile = {
+    username: user.username,
+    email: user.email,
+    profilePicture: "",
+    displayName: user.username,
+  };
+
+  const mongoProfile = new Profile(newProfile);
+  await mongoProfile.save();
+
   const mongoUser = new UserModel(newUser);
   const res = await mongoUser.save();
   return res;

@@ -6,10 +6,19 @@ export const userSchema = new mongoose.Schema({
     unique: true,
   },
   password: String,
-  email: String,
   googleId: {
     required: false,
     type: String,
   },
   token: String,
+});
+
+export const profileSchema = new mongoose.Schema({
+  displayName: String,
+  profilePicture: String,
+  email: String,
+  username: {
+    type: String,
+    unique: true,
+  },
 });

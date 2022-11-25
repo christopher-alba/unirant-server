@@ -7,7 +7,6 @@ export type UserArgs = {
 export type NewUser = {
   username: string;
   password?: string;
-  email?: string;
   token?: string;
   googleId?: string;
   __v?: number;

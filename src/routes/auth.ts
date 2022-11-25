@@ -3,6 +3,7 @@ import { Router, Request, Response } from "express";
 import { register, setJWT } from "../mongodb/db/auth";
 import passport from "passport";
 import { NewUser } from "../types/user";
+import { Profile } from "../mongodb/models";
 
 const authRouter = Router();
 
@@ -67,7 +68,10 @@ authRouter.post("/getuser", async (req: Request, res: Response) => {
         )
       ) {
         console.log(req.user);
-        res.send(req.user);
+        const profile = await Profile.findOne({
+          username: (req.user as NewUser).username,
+        });
+        res.send(profile);
       } else {
         res
           .status(401)
@@ -77,7 +81,17 @@ authRouter.post("/getuser", async (req: Request, res: Response) => {
       res.status(500).send(err.message);
     }
   } else {
-    res.send(req.user);
+    try {
+      console.log("REQ.USER:" + (req.user as NewUser).username);
+      const profile = await Profile.findOne({
+        username: (req.user as NewUser).username,
+      });
+      console.log("profileObj: " + profile);
+
+      res.send(profile);
+    } catch (err: any) {
+      res.status(500).send(err.message);
+    }
   }
 });
 

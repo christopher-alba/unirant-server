@@ -1,8 +1,9 @@
+import { NewProfile } from "./../types/profile";
 import { Error } from "mongoose";
 import passport from "passport";
 import pgo20 from "passport-google-oauth20";
 import plocal from "passport-local";
-import { User } from "../mongodb/models";
+import { Profile, User } from "../mongodb/models";
 import { NewUser } from "../types/user";
 import { verifyPassword } from "../utils/auth";
 
@@ -24,14 +25,25 @@ passport.use(
           if (err) {
             return cb(err, null);
           }
-
+          console.log(profile);
           if (!doc) {
             const newUser = new User({
               googleId: profile.id,
-              username: profile.name.givenName,
+              username: profile.name.givenName + ":" + profile.id,
             });
 
             await newUser.save();
+
+            const newProfile: NewProfile = {
+              username: profile.name.givenName + ":" + profile.id,
+              email: "",
+              profilePicture: profile.photos[0].value,
+              displayName: profile.name.givenName,
+            };
+
+            const mongoProfile = new Profile(newProfile);
+            await mongoProfile.save();
+
             cb(null, newUser);
           } else {
             cb(null, doc);
