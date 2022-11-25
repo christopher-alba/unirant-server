@@ -1,6 +1,8 @@
+import { verifyJWT } from "./../mongodb/db/auth";
 import { Router, Request, Response } from "express";
-import { register } from "../mongodb/db/auth";
+import { register, setJWT } from "../mongodb/db/auth";
 import passport from "passport";
+import { NewUser } from "../types/user";
 
 const authRouter = Router();
 
@@ -36,25 +38,40 @@ authRouter.get(
 
 authRouter.post(
   "/auth/default/login",
-  passport.authenticate("local"),
-  function (req, res) {
-    res.status(200).send("User logged in: " + req.user);
+  passport.authenticate("local", {
+    session: true,
+  }),
+  async function (req, res) {
+    const token = await setJWT((req.user as NewUser)._id as string);
+    res.status(200).send(token);
   }
 );
 
 authRouter.post("/auth/default/register", async (req, res) => {
   try {
-    const userId = await register(req.body);
-    res.status(200).send(userId);
+    const user = await register(req.body);
+    res.status(200).send(user);
   } catch (err: any) {
     console.log("ERROR THROWN: " + err);
     res.status(500).send(err.message);
   }
 });
 
-authRouter.get("/getuser", (req: any, res: any) => {
-  console.log(req.user);
-  res.send(req.user);
+authRouter.post("/getuser", async (req: Request, res: Response) => {
+  try {
+    if (
+      await verifyJWT((req.user as NewUser)._id as string, req.body.localToken)
+    ) {
+      console.log(req.user);
+      res.send(req.user);
+    } else {
+      res
+        .status(401)
+        .send("Cannot verify the JWT successfully from the server.");
+    }
+  } catch (err: any) {
+    res.status(500).send(err.message);
+  }
 });
 
 authRouter.get("/auth/logout", (req, res) => {

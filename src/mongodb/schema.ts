@@ -11,4 +11,5 @@ export const userSchema = new mongoose.Schema({
     required: false,
     type: String,
   },
+  token: String,
 });

@@ -51,10 +51,14 @@ passport.use(
       if (!user) {
         return done(null, false);
       }
-      if ((await verifyPassword(password, user.password as any)) === false) {
-        return done(null, false);
+      try {
+        if ((await verifyPassword(password, user.password as any)) === false) {
+          return done(null, false);
+        }
+        return done(null, user);
+      } catch (err) {
+        return done(err, false);
       }
-      return done(null, user);
     });
   })
 );
