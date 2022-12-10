@@ -29,12 +29,14 @@ const corsConfig = {
 };
 server.use(cors(corsConfig));
 server.options("*", cors(corsConfig));
-server.set("trust proxy", 1);
+server.enable("trust proxy");
 server.use(
   session({
     secret: "secretcode",
     resave: true,
     saveUninitialized: true,
+    proxy: true,
+    name: "express-session-auth-unirant",
     cookie: {
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
