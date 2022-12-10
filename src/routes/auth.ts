@@ -8,7 +8,7 @@ import { Profile } from "../mongodb/models";
 const authRouter = Router();
 const redirectURL =
   process.env.NODE_ENV === "production"
-    ? "https://unirant.netlify.app/"
+    ? "https://unirant.netlify.app"
     : "http://localhost:3000";
 
 authRouter.get("/users", (req: Request, res: Response) => {
