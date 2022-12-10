@@ -36,6 +36,7 @@ server.use(
     resave: true,
     saveUninitialized: true,
     cookie: {
+      sameSite: "none",
       maxAge: 1000 * 60 * 60 * 24 * 7, // One Week
     },
   })
