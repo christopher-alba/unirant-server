@@ -6,8 +6,8 @@ import passport from "passport";
 import session from "express-session";
 import "./mongodb";
 import "./config/passport";
-import { NewUser } from "./types/user";
 import { User } from "./mongodb/models";
+import profileRouter from "./routes/profile";
 
 const jsonParser = bodyParser.json();
 const urlencondedParser = bodyParser.urlencoded({ extended: false });
@@ -49,6 +49,7 @@ passport.deserializeUser((id: string, done: any) => {
 const port: string | number = process.env.PORT || 5000;
 
 server.use("/api/v1", authRouter);
+server.use("/api/v1", profileRouter);
 
 server.listen(port, function () {
   console.log("Listening on port", port);
