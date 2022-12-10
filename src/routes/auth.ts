@@ -6,6 +6,10 @@ import { NewUser } from "../types/user";
 import { Profile } from "../mongodb/models";
 
 const authRouter = Router();
+const redirectURL =
+  process.env.NODE_ENV === "production"
+    ? "https://unirant.netlify.app/"
+    : "http://localhost:3000";
 
 authRouter.get("/users", (req: Request, res: Response) => {
   res.status(200).send("Received a get request at api/v1/users");
@@ -27,13 +31,13 @@ authRouter.get(
 authRouter.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:3000",
+    failureRedirect: redirectURL,
     session: true,
   }),
   function (req, res) {
     console.log("User stored: " + req.user);
 
-    res.redirect("http://localhost:3000");
+    res.redirect(redirectURL);
   }
 );
 
