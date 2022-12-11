@@ -3,4 +3,5 @@ export type NewProfile = {
   profilePicture: string;
   email: string;
   username: string;
+  emailVerified: boolean;
 };

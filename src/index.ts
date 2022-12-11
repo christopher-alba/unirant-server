@@ -5,59 +5,37 @@ import cors from "cors";
 import passport from "passport";
 import session from "express-session";
 import "./mongodb";
-import "./config/passport";
 import { User } from "./mongodb/models";
 import profileRouter from "./routes/profile";
+import { Router } from "express";
+import { expressjwt, GetVerificationKey } from "express-jwt";
+import JwksRsa from "jwks-rsa";
 
 const jsonParser = bodyParser.json();
 const urlencondedParser = bodyParser.urlencoded({ extended: false });
 server.use(jsonParser);
 server.use(urlencondedParser);
-const allowedDomains = ["http://localhost:3000", "https://unirant.netlify.app"];
 const corsConfig = {
-  origin: function (origin: any, callback: any) {
-    // bypass the requests with no origin (like curl requests, mobile apps, etc )
-    if (!origin) return callback(null, true);
-
-    if (allowedDomains.indexOf(origin) === -1) {
-      var msg = `This site ${origin} does not have an access. Only specific domains are allowed to access it.`;
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
+  origin:
+    process.env.NODE_ENV === "production"
+      ? "https://unirant.netlify.app"
+      : "http://localhost:3000",
   credentials: true,
 };
 server.use(cors(corsConfig));
 server.options("*", cors(corsConfig));
 server.enable("trust proxy");
-server.use(
-  session({
-    secret: "secretcode",
-    resave: true,
-    saveUninitialized: true,
-    proxy: true,
-    name: "express-session-auth-unirant",
-    cookie: {
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      secure: process.env.NODE_ENV === "production",
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // One Week
-    },
-  })
-);
-server.use(passport.initialize());
-server.use(passport.session());
 
-passport.serializeUser((user: any, done: any) => {
-  console.log("serializing user: " + user);
-  return done(null, user._id);
-});
-
-passport.deserializeUser((id: string, done: any) => {
-  console.log("Testing 1");
-  User.findById(id, (err: Error, doc: any) => {
-    // Whatever we return goes to the client and binds to the req.user property
-    return done(null, doc);
-  });
+export const jwtCheck = expressjwt({
+  secret: JwksRsa.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: "https://chris-alba-dev.au.auth0.com/.well-known/jwks.json",
+  }) as GetVerificationKey,
+  audience: "https://chris-alba-dev.au.auth0.com/api/v2/",
+  issuer: "https://chris-alba-dev.au.auth0.com/",
+  algorithms: ["RS256"],
 });
 
 const port: string | number = process.env.PORT || 5000;
