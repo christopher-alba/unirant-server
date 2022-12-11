@@ -21,6 +21,7 @@ export const profileSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
+  emailVerified: Boolean,
 });
 
 export const communitySchema = new mongoose.Schema({
