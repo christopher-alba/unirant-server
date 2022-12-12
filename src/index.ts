@@ -5,7 +5,6 @@ import cors from "cors";
 import passport from "passport";
 import session from "express-session";
 import "./mongodb";
-import { User } from "./mongodb/models";
 import profileRouter from "./routes/profile";
 import { Router } from "express";
 import { expressjwt, GetVerificationKey } from "express-jwt";
