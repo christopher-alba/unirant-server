@@ -1,9 +1,6 @@
 import { jwtCheck } from "./../index";
 import { Router, Request, Response } from "express";
-import passport from "passport";
-import { NewUser } from "../types/user";
 import { Profile } from "../mongodb/models";
-import { LogoutOptions, requiresAuth } from "express-openid-connect";
 import { NewProfile } from "../types/profile";
 
 const authRouter = Router();

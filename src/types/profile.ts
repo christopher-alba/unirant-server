@@ -5,3 +5,10 @@ export type NewProfile = {
   username: string;
   emailVerified: boolean;
 };
+
+export type ProfileEditObj = {
+  displayName: string;
+  profilePicture: string;
+  email: string;
+  emailVerified: boolean;
+};

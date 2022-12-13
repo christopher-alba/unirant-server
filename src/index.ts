@@ -2,16 +2,16 @@ import authRouter from "./routes/auth";
 import server from "./server";
 import bodyParser from "body-parser";
 import cors from "cors";
-import passport from "passport";
-import session from "express-session";
 import "./mongodb";
 import profileRouter from "./routes/profile";
-import { Router } from "express";
 import { expressjwt, GetVerificationKey } from "express-jwt";
 import JwksRsa from "jwks-rsa";
 
-const jsonParser = bodyParser.json();
-const urlencondedParser = bodyParser.urlencoded({ extended: false });
+const jsonParser = bodyParser.json({ limit: "50mb" });
+const urlencondedParser = bodyParser.urlencoded({
+  limit: "50mb",
+  extended: false,
+});
 server.use(jsonParser);
 server.use(urlencondedParser);
 const corsConfig = {

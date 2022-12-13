@@ -1,4 +1,4 @@
-import { getProfileByUsername } from "./../mongodb/db/profile";
+import { getProfileByUsername, updateProfile } from "./../mongodb/db/profile";
 import { Router, Request, Response } from "express";
 import { jwtCheck } from "..";
 
@@ -9,12 +9,29 @@ profileRouter.get(
   (req, res, next) => jwtCheck(req, res, next),
   async (req: Request, res: Response) => {
     const username = req.params.username;
-    const profile = await getProfileByUsername(username as any).catch((err) => {
+    try {
+      const profile = await getProfileByUsername(username);
+      res.status(200).send(profile);
+    } catch (err: any) {
       res.status(500).send(err.message);
-    });
-    console.log(profile);
+    }
+  }
+);
 
-    res.status(200).send(profile);
+profileRouter.post(
+  "/profile/:username",
+  (req, res, next) => jwtCheck(req, res, next),
+  async (req: Request, res: Response) => {
+    const username = req.params.username;
+    try {
+      const response = await updateProfile(username, req.body);
+      console.log(response);
+
+      res.status(200).send("Profile successfully updated.");
+    } catch (err: any) {
+      console.log(err);
+      res.status(500).send(err.message);
+    }
   }
 );
 
