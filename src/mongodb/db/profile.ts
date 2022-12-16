@@ -1,4 +1,4 @@
-import { NewProfile, ProfileEditObj } from "../../types/profile";
+import { ProfileEditObj } from "../../types/profile";
 import { Profile } from "../models";
 
 export const getProfileByUsername = async (username: string) => {

@@ -10,20 +10,65 @@ export const profileSchema = new mongoose.Schema({
     unique: true,
   },
   emailVerified: Boolean,
+  communitiesMember: {
+    type: [
+      {
+        type: String,
+        unique: true,
+      },
+    ],
+    required: false,
+  },
+  communitiesAdmin: {
+    type: [
+      {
+        type: String,
+        unique: true,
+      },
+    ],
+    required: false,
+  },
+  posts: {
+    type: [
+      {
+        type: String,
+        unique: true,
+      },
+    ],
+    required: false,
+  },
+  comments: {
+    type: [
+      {
+        type: String,
+        unique: true,
+      },
+    ],
+    required: false,
+  },
 });
 
 export const communitySchema = new mongoose.Schema({
   name: {
     type: String,
     unique: true,
+    required: true,
   },
   description: {
     type: String,
-    required: false,
+    required: true,
   },
+  adminIDs: { type: [String], required: false },
   creationDate: { type: Date, default: Date.now },
   memberIDs: { type: [String], required: false },
   postIDs: { type: [String], required: false },
+  wallpaper: {
+    type: String,
+    default: () =>
+      `https://picsum.photos/2000/3000?random=${
+        Math.random() * Number.MAX_VALUE
+      }`,
+  },
 });
 
 export const postSchema = new mongoose.Schema({

@@ -6,6 +6,7 @@ import "./mongodb";
 import profileRouter from "./routes/profile";
 import { expressjwt, GetVerificationKey } from "express-jwt";
 import JwksRsa from "jwks-rsa";
+import communityRouter from "./routes/community";
 
 const jsonParser = bodyParser.json({ limit: "50mb" });
 const urlencondedParser = bodyParser.urlencoded({
@@ -41,6 +42,7 @@ const port: string | number = process.env.PORT || 5000;
 
 server.use("/api/v1", authRouter);
 server.use("/api/v1", profileRouter);
+server.use("/api/v1", communityRouter);
 
 server.listen(port, function () {
   console.log("Listening on port", port);
