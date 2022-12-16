@@ -1,4 +1,8 @@
-import { createCommunity, getCommunities } from "./../mongodb/db/community";
+import {
+  createCommunity,
+  getCommunities,
+  getSpecificCommunities,
+} from "./../mongodb/db/community";
 import { jwtCheck } from "./../index";
 import { Router, Request, Response } from "express";
 
@@ -21,11 +25,26 @@ communityRouter.post(
 communityRouter.get("/community/all", async (req: Request, res: Response) => {
   try {
     const communities = await getCommunities();
-    console.log(communities);
     res.status(200).send(communities);
   } catch (err: any) {
     res.status(500).send("Community fetching failed. " + err.message);
   }
 });
+
+communityRouter.post(
+  "/community/specific",
+  async (req: Request, res: Response) => {
+    try {
+      console.log(req.body);
+      const communities = await getSpecificCommunities(req.body.communitiesIDs);
+      console.log(communities);
+      res.status(200).send(communities);
+    } catch (err: any) {
+      res
+        .status(500)
+        .send("Specific communities fetching failed. " + err.stack);
+    }
+  }
+);
 
 export default communityRouter;

@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { Community, Profile } from "../models";
 
 export const createCommunity = async (communityObj: any) => {
@@ -10,17 +11,29 @@ export const createCommunity = async (communityObj: any) => {
   console.log(communityObj);
   const community = new Community(communityObj);
   let profile = await Profile.findById(communityObj.adminIDs[0]);
-  profile?.communitiesAdmin.push(community.name);
+  profile?.communitiesAdmin.push(community._id.toString());
+  await community.save();
   await Profile.updateOne(
     { id: communityObj.adminIDs[0] },
     {
       communitiesAdmin: profile?.communitiesAdmin,
     }
   );
-  await community.save();
+  
   return community;
 };
 
 export const getCommunities = async () => {
   return await Community.find();
+};
+
+export const getSpecificCommunities = async (communitiesIDs: string[]) => {
+  console.log(communitiesIDs);
+  return await Community.find({
+    _id: {
+      $in: communitiesIDs.map(
+        (communityID: string) => new Types.ObjectId(communityID)
+      ),
+    },
+  });
 };
