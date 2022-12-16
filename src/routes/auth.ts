@@ -20,6 +20,9 @@ authRouter.post(
           email: req.body.user.email,
           profilePicture: req.body.user.picture,
           displayName: req.body.user.name,
+          wallpaper: `https://picsum.photos/2000/3000?random=${
+            Math.random() * Number.MAX_VALUE
+          }`,
           emailVerified: req.body.user.email_verified,
         };
 
@@ -45,6 +48,10 @@ authRouter.post(
             username: req.body.user.name + ":" + req.body.user.sub,
             emailVerified: undefined,
           },
+          {
+            username: req.body.user.name + ":" + req.body.user.sub,
+            wallpaper: undefined,
+          },
         ],
       });
       if (outdatedProfile) {
@@ -54,6 +61,9 @@ authRouter.post(
           profilePicture: req.body.user.picture,
           displayName: req.body.user.name,
           emailVerified: req.body.user.email_verified,
+          wallpaper: `https://picsum.photos/2000/3000?random=${
+            Math.random() * Number.MAX_VALUE
+          }`,
         });
 
         profile = await Profile.findOne({

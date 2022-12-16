@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 export const profileSchema = new mongoose.Schema({
   displayName: String,
   profilePicture: String,
+  wallpaper: String,
   email: String,
   username: {
     type: String,
