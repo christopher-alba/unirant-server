@@ -3,6 +3,7 @@ import {
   getCommunities,
   getSpecificCommunities,
   joinCommunity,
+  leaveCommunity,
 } from "./../mongodb/db/community";
 import { jwtCheck } from "./../index";
 import { Router, Request, Response } from "express";
@@ -53,9 +54,20 @@ communityRouter.post(
       await joinCommunity(req.body.communityID, req.body.userID);
       res.status(200).send("Successfully joined community");
     } catch (err: any) {
-      res
-        .status(500)
-        .send("Specific communities fetching failed. " + err.message);
+      res.status(500).send("Could not join community. " + err.message);
+    }
+  }
+);
+
+communityRouter.post(
+  "/community/leave",
+  (req, res, next) => jwtCheck(req, res, next),
+  async (req: Request, res: Response) => {
+    try {
+      await leaveCommunity(req.body.communityID, req.body.userID);
+      res.status(200).send("Successfully left community");
+    } catch (err: any) {
+      res.status(500).send("Could not leave community. " + err.message);
     }
   }
 );

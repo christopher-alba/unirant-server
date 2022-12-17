@@ -64,3 +64,30 @@ export const joinCommunity = async (communityID: string, userID: string) => {
   console.log(response2);
   return;
 };
+
+export const leaveCommunity = async (communityID: string, userID: string) => {
+  const community = await Community.findById(new Types.ObjectId(communityID));
+  if (
+    !community?.adminIDs.includes(userID) &&
+    !community?.memberIDs.includes(userID)
+  ) {
+    throw new Error(
+      "You are not part of this community and so you can't leave it."
+    );
+  }
+  const response = await Community.findByIdAndUpdate(
+    new Types.ObjectId(communityID),
+    {
+      $pull: { memberIDs: userID },
+    }
+  );
+  const response2 = await Profile.findByIdAndUpdate(
+    new Types.ObjectId(userID),
+    {
+      $pull: { communitiesMember: communityID },
+    }
+  );
+  console.log(response);
+  console.log(response2);
+  return;
+};
