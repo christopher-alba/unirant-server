@@ -10,16 +10,14 @@ export const createCommunity = async (communityObj: any) => {
   }
   console.log(communityObj);
   const community = new Community(communityObj);
-  let profile = await Profile.findById(communityObj.adminIDs[0]);
-  profile?.communitiesAdmin.push(community._id.toString());
   await community.save();
-  await Profile.updateOne(
-    { id: communityObj.adminIDs[0] },
+  const response = await Profile.updateOne(
+    { _id: new Types.ObjectId(communityObj.adminIDs[0]) },
     {
-      communitiesAdmin: profile?.communitiesAdmin,
+      $push: { communitiesAdmin: community._id.toString() },
     }
   );
-
+  console.log(response);
   return community;
 };
 
@@ -75,19 +73,18 @@ export const leaveCommunity = async (communityID: string, userID: string) => {
       "You are not part of this community and so you can't leave it."
     );
   }
-  const response = await Community.findByIdAndUpdate(
-    new Types.ObjectId(communityID),
-    {
-      $pull: { memberIDs: userID },
-    }
-  );
-  const response2 = await Profile.findByIdAndUpdate(
-    new Types.ObjectId(userID),
-    {
-      $pull: { communitiesMember: communityID },
-    }
-  );
-  console.log(response);
-  console.log(response2);
+  await Community.findByIdAndUpdate(new Types.ObjectId(communityID), {
+    $pull: { memberIDs: userID },
+  });
+  await Profile.findByIdAndUpdate(new Types.ObjectId(userID), {
+    $pull: { communitiesMember: communityID },
+  });
+
+  await Community.findByIdAndUpdate(new Types.ObjectId(communityID), {
+    $pull: { adminIDs: userID },
+  });
+  await Profile.findByIdAndUpdate(new Types.ObjectId(userID), {
+    $pull: { communitiesAdmin: communityID },
+  });
   return;
 };
