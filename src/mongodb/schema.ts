@@ -14,7 +14,6 @@ export const profileSchema = new mongoose.Schema({
     type: [
       {
         type: String,
-        unique: true,
       },
     ],
     required: false,
@@ -23,7 +22,6 @@ export const profileSchema = new mongoose.Schema({
     type: [
       {
         type: String,
-        unique: true,
       },
     ],
     required: false,
@@ -32,7 +30,6 @@ export const profileSchema = new mongoose.Schema({
     type: [
       {
         type: String,
-        unique: true,
       },
     ],
     required: false,
@@ -41,7 +38,6 @@ export const profileSchema = new mongoose.Schema({
     type: [
       {
         type: String,
-        unique: true,
       },
     ],
     required: false,

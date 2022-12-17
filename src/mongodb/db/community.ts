@@ -19,7 +19,7 @@ export const createCommunity = async (communityObj: any) => {
       communitiesAdmin: profile?.communitiesAdmin,
     }
   );
-  
+
   return community;
 };
 
@@ -36,4 +36,31 @@ export const getSpecificCommunities = async (communitiesIDs: string[]) => {
       ),
     },
   });
+};
+
+export const joinCommunity = async (communityID: string, userID: string) => {
+  const community = await Community.findById(new Types.ObjectId(communityID));
+  if (
+    community?.adminIDs.includes(userID) ||
+    community?.memberIDs.includes(userID)
+  ) {
+    throw new Error(
+      "You are already part of this community and can no longer join again."
+    );
+  }
+  const response = await Community.findByIdAndUpdate(
+    new Types.ObjectId(communityID),
+    {
+      $push: { memberIDs: userID },
+    }
+  );
+  const response2 = await Profile.findByIdAndUpdate(
+    new Types.ObjectId(userID),
+    {
+      $push: { communitiesMember: communityID },
+    }
+  );
+  console.log(response);
+  console.log(response2);
+  return;
 };
