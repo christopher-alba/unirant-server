@@ -36,28 +36,87 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var index_1 = require("./../index");
 var express_1 = require("express");
-var auth_1 = require("../mongodb/db/auth");
+var models_1 = require("../mongodb/models");
 var authRouter = (0, express_1.Router)();
-authRouter.get("/users", function (req, res) {
-    res.status(200).send("Received a get request at api/v1/users");
-});
-authRouter.post("/users", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, err_1;
+authRouter.post("/getuser", function (req, res, next) { return (0, index_1.jwtCheck)(req, res, next); }, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var profile, newProfile, mongoProfile, outdatedProfile, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, (0, auth_1.register)(req.body)];
+                _a.trys.push([0, 8, , 9]);
+                console.log(req.body.user);
+                return [4 /*yield*/, models_1.Profile.findOne({
+                        username: req.body.user.name + ":" + req.body.user.sub,
+                    })];
             case 1:
-                userId = _a.sent();
-                res.status(200).send(userId);
-                return [3 /*break*/, 3];
+                profile = _a.sent();
+                if (!(profile === null)) return [3 /*break*/, 3];
+                newProfile = {
+                    username: req.body.user.name + ":" + req.body.user.sub,
+                    email: req.body.user.email,
+                    profilePicture: req.body.user.picture,
+                    displayName: req.body.user.name,
+                    wallpaper: "https://picsum.photos/2000/3000?random=".concat(Math.random() * Number.MAX_VALUE),
+                    emailVerified: req.body.user.email_verified,
+                };
+                mongoProfile = new models_1.Profile(newProfile);
+                return [4 /*yield*/, mongoProfile.save()];
             case 2:
+                _a.sent();
+                _a.label = 3;
+            case 3: return [4 /*yield*/, models_1.Profile.findOne({
+                    $or: [
+                        {
+                            username: req.body.user.name + ":" + req.body.user.sub,
+                            email: undefined,
+                        },
+                        {
+                            username: req.body.user.name + ":" + req.body.user.sub,
+                            profilePicture: undefined,
+                        },
+                        {
+                            username: req.body.user.name + ":" + req.body.user.sub,
+                            displayName: undefined,
+                        },
+                        {
+                            username: req.body.user.name + ":" + req.body.user.sub,
+                            emailVerified: undefined,
+                        },
+                        {
+                            username: req.body.user.name + ":" + req.body.user.sub,
+                            wallpaper: undefined,
+                        },
+                    ],
+                })];
+            case 4:
+                outdatedProfile = _a.sent();
+                if (!outdatedProfile) return [3 /*break*/, 7];
+                return [4 /*yield*/, (outdatedProfile === null || outdatedProfile === void 0 ? void 0 : outdatedProfile.updateOne({
+                        username: req.body.user.name + ":" + req.body.user.sub,
+                        email: req.body.user.email,
+                        profilePicture: req.body.user.picture,
+                        displayName: req.body.user.name,
+                        emailVerified: req.body.user.email_verified,
+                        wallpaper: "https://picsum.photos/2000/3000?random=".concat(Math.random() * Number.MAX_VALUE),
+                    }))];
+            case 5:
+                _a.sent();
+                return [4 /*yield*/, models_1.Profile.findOne({
+                        username: req.body.user.name + ":" + req.body.user.sub,
+                    })];
+            case 6:
+                profile = _a.sent();
+                _a.label = 7;
+            case 7:
+                res.send(profile);
+                return [3 /*break*/, 9];
+            case 8:
                 err_1 = _a.sent();
-                res.status(500).send(err_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                res.status(500).send(err_1.message);
+                return [3 /*break*/, 9];
+            case 9: return [2 /*return*/];
         }
     });
 }); });

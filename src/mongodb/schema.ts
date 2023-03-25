@@ -70,8 +70,7 @@ export const communitySchema = new mongoose.Schema({
 export const postSchema = new mongoose.Schema({
   title: String,
   description: String,
-  profileID: String,
-  userID: String,
+  profileID: { type: String, required: true },
   likes: Number,
   dislikes: Number,
   images: [String],
@@ -85,6 +84,5 @@ export const commentSchema = new mongoose.Schema({
   likes: Number,
   dislikes: Number,
   isImage: Boolean,
-  userID: String,
   profileID: String,
 });

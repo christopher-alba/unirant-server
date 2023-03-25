@@ -36,25 +36,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.register = void 0;
+exports.updateProfile = exports.getProfileByUsername = void 0;
 var models_1 = require("../models");
-var register = function (user) { return __awaiter(void 0, void 0, void 0, function () {
-    var newUser, mongoUser, res;
+var getProfileByUsername = function (username) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                newUser = {
-                    username: user.username,
-                    password: user.password,
-                    email: user.email,
-                    token: undefined,
-                };
-                mongoUser = new models_1.User(newUser);
-                return [4 /*yield*/, mongoUser.save()];
-            case 1:
-                res = _a.sent();
-                return [2 /*return*/, res._id];
+            case 0: return [4 /*yield*/, models_1.Profile.findOne({ username: username }).catch(function (err) { return err.message; })];
+            case 1: return [2 /*return*/, _a.sent()];
         }
     });
 }); };
-exports.register = register;
+exports.getProfileByUsername = getProfileByUsername;
+var updateProfile = function (username, profileObj) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, models_1.Profile.updateOne({ username: username }, profileObj)];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
+    });
+}); };
+exports.updateProfile = updateProfile;
