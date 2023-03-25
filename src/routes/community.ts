@@ -11,6 +11,7 @@ import {
   createCommunityPost,
   deleteCommunityPost,
   getCommunityPosts,
+  getUserRelatedPosts,
   updateCommunityPost,
 } from "../mongodb/db/post";
 
@@ -97,7 +98,7 @@ communityRouter.post(
 
 communityRouter.post(
   "/community/post/update",
-  // (req, res, next) => jwtCheck(req, res, next),
+  (req, res, next) => jwtCheck(req, res, next),
   async (req: Request, res: Response) => {
     try {
       await updateCommunityPost(req.body.post);
@@ -123,10 +124,22 @@ communityRouter.delete(
 
 communityRouter.get(
   "/community/:id/posts",
-  (req, res, next) => jwtCheck(req, res, next),
   async (req: Request, res: Response) => {
     try {
       const communityPosts = await getCommunityPosts(req.params.id);
+      res.status(200).send(communityPosts);
+    } catch (err: any) {
+      res.status(500).send("Could not get posts. " + err.message);
+    }
+  }
+);
+
+communityRouter.get(
+  "/community/user/:id/posts",
+  (req, res, next) => jwtCheck(req, res, next),
+  async (req: Request, res: Response) => {
+    try {
+      const communityPosts = await getUserRelatedPosts(req.params.id);
       res.status(200).send(communityPosts);
     } catch (err: any) {
       res.status(500).send("Could not get posts. " + err.message);

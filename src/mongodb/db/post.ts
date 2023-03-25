@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 import { NewPostObj, PostEditObj } from "./../../types/post";
 import { Post, Community, Profile } from "../models";
 import { Types } from "mongoose";
+import { convertToObjectIDs } from "../../utils/helpers";
 
 export const createCommunityPost = async (
   communityID: string,
@@ -37,7 +38,33 @@ export const deleteCommunityPost = async (postID: ObjectId) => {
 export const getCommunityPosts = async (communityID: string) => {
   const community = await Community.findById(new Types.ObjectId(communityID));
   const communityPostIDs = community?.postIDs;
-  return await Post.find({
-    _id: communityPostIDs,
+  console.log(communityPostIDs);
+  const posts = await Post.find({
+    _id: { $in: convertToObjectIDs(communityPostIDs || []) },
   });
+  console.log(posts);
+  return posts;
+};
+
+export const getUserRelatedPosts = async (profileID: string) => {
+  const profile = await Profile.findById(new Types.ObjectId(profileID));
+  const communityIDs = profile?.communitiesAdmin.concat(
+    profile.communitiesMember
+  );
+
+  const communities = await Community.find({
+    _id: convertToObjectIDs(communityIDs || []),
+  });
+
+  let userRelatedPosts: any[] = [];
+  for (let i = 0; i < communities.length; i++) {
+    const community = communities[i];
+    if (community.postIDs.length > 0) {
+      const posts = await Post.find({
+        _id: convertToObjectIDs(community.postIDs),
+      });
+      userRelatedPosts = userRelatedPosts.concat(posts);
+    }
+  }
+  return userRelatedPosts;
 };
