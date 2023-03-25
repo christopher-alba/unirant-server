@@ -14,6 +14,7 @@ import {
   getUserRelatedPosts,
   updateCommunityPost,
 } from "../mongodb/db/post";
+import { Types } from "mongoose";
 
 const communityRouter = Router();
 
@@ -111,10 +112,10 @@ communityRouter.post(
 
 communityRouter.delete(
   "/community/post/:id",
-  (req, res, next) => jwtCheck(req, res, next),
+  // (req, res, next) => jwtCheck(req, res, next),
   async (req: Request, res: Response) => {
     try {
-      await deleteCommunityPost(req.body.post);
+      await deleteCommunityPost(new Types.ObjectId(req.params.id));
       res.status(200).send("Successfully deleted post");
     } catch (err: any) {
       res.status(500).send("Could not delete post. " + err.message);
