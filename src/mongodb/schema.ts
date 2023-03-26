@@ -71,18 +71,30 @@ export const postSchema = new mongoose.Schema({
   title: String,
   description: String,
   profileID: { type: String, required: true },
-  likes: { type: Number, default: 0 },
-  dislikes: { type: Number, default: 0 },
   images: [String],
   creationDate: { type: Date, default: Date.now },
   commentIDs: { type: [String], default: [] },
+  likesArray: {
+    type: [String],
+    default: [],
+  },
+  dislikesArray: {
+    type: [String],
+    default: [],
+  },
 });
 
 export const commentSchema = new mongoose.Schema({
   comment: String,
   creationDate: { type: Date, default: Date.now },
-  likes: Number,
-  dislikes: Number,
+  likesArray: {
+    type: [String],
+    default: [],
+  },
+  dislikesArray: {
+    type: [String],
+    default: [],
+  },
   isImage: Boolean,
   profileID: String,
 });
